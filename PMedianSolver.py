@@ -7,15 +7,16 @@ def solve_pMedian(filename, nLOC, maxIT, tenure, runs):
     def read_costMatrix():
         costMatrix = []
         with open(filename, 'r') as data:
-            for line in data:
-                costMatrix.append(list(map(int, line.split()))) #turn the file into a 2D matrix
-        #costMatrix.pop()
-        #costMatrix.pop()
+            start = 0
+            while start <= nLOC:
+                for line in data:
+                    costMatrix.append(list(map(int, line.split()))) #turn the file into a 2D matrix
+                start += 1
         return costMatrix
 
     def compute_objective(solution, costMatrix):
         objVal = 0
-        for i in range(len(costMatrix)): #ask Kincaid about how the matrix is 302 long but only 300 in each column
+        for i in range(len(costMatrix)): 
             min_dist = float('inf')
             for j in solution: 
                 if costMatrix[i][j] < min_dist:
@@ -58,7 +59,7 @@ def solve_pMedian(filename, nLOC, maxIT, tenure, runs):
             return greedy_add(costMatrix, probabilityMatrix, nLOC) #for the very first time, just do a simple greedy add 
         else:
             num = random.random()
-            if num >= 0.2: # 80% chance that we use the probability matrix with a greedy add to construct the starting solution (intensification)
+            if num >= 0.4: # 80% chance that we use the probability matrix with a greedy add to construct the starting solution (intensification)
                 print('greedy add solution')
                 return greedy_add(costMatrix, probabilityMatrix, nLOC) 
             else: # 20% chance that we restart with a totally random solution (diversification)
@@ -119,7 +120,7 @@ def solve_pMedian(filename, nLOC, maxIT, tenure, runs):
               ' | Aspiration count for current run: ' + str(aspiration_count))
 
             for location in best_local_solution:
-                probabilityMatrix[location] += 0.1
+                probabilityMatrix[location] += 0.2
         
         print('the tabu list is ' + str(tabu_list))
 
@@ -154,11 +155,12 @@ def solve_pMedian(filename, nLOC, maxIT, tenure, runs):
             best_evaluation_location = iteration_result['best_evaluation_location']
         print('The best solution is ' + str(best_solution) + '\n' 
               + 'its objective value is ' + str(best_evaluation) + '\n'
+              + 'its length is ' + str(len(best_solution)) + '\n'
              + 'and it was found in iteration ' + str(best_evaluation_location[0]) + 
              ' of run ' + str(best_evaluation_location[1]))
 
 if __name__ == '__main__':
-    solve_pMedian(filename = 'spd14.dat', nLOC = 60, maxIT = 15, tenure = 20, runs = 50)
+    solve_pMedian(filename = 'spd19.dat', nLOC = 80, maxIT = 100, tenure = 100, runs = 30)
 
 
 #things to add
